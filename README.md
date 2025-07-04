@@ -98,7 +98,7 @@ Input: 32.00 °F
 Converted: 0.00 °C
 ```
 
-'''### Piped Input
+### Piped Input
 
 You can also pipe a value directly into the tool. When you do this, the input is assumed to be in **Celsius**.
 
@@ -118,7 +118,7 @@ Converted:
   - Rankine: 536.67 °R
 ```
 
-### Supported Scales'''
+### Supported Scales
 
 The following scales are supported, with both full names and short forms:
 
