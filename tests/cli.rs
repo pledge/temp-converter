@@ -26,3 +26,11 @@ fn test_cli_input_with_target() {
         .stdout(predicate::str::contains("Input: 0.00 °C"))
         .stdout(predicate::str::contains("Converted: 32.00 °F"));
 }
+
+#[test]
+fn test_no_args_shows_help() {
+    let mut cmd = Command::cargo_bin("temp-converter").unwrap();
+    cmd.assert().code(0)
+        .stdout(predicate::str::contains("Usage:"))
+        .stdout(predicate::str::contains("Options:"));
+}

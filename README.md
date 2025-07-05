@@ -55,6 +55,20 @@ cargo test
 
 To use the tool, run the binary with the value and scale you want to convert from. By default, it will output the conversion in all other available scales.
 
+### Help
+
+Running the tool without any arguments will display the help screen:
+
+```bash
+./target/release/temp-converter
+```
+
+This is equivalent to running:
+
+```bash
+./target/release/temp-converter --help
+```
+
 ### Basic Conversion
 
 ```bash

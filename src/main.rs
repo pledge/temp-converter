@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser, CommandFactory};
 use colored::*;
 use std::io::{self, Read};
 use temp_converter::{Scale, Temperature};
@@ -17,7 +17,7 @@ const LOGO: &str = r#"
 "#;
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None, before_help = LOGO)]
+#[command(author, version, about = "A CLI tool for converting between temperature scales (Celsius, Fahrenheit, Kelvin, Rankine). Run without arguments to see this help.", long_about = None, before_help = LOGO)]
 struct Args {
     /// The temperature value to convert
     #[arg(required = false)]
@@ -39,17 +39,38 @@ fn main() {
         Temperature::new(value, scale)
     } else if !atty::is(Stream::Stdin) {
         let mut buffer = String::new();
-        io::stdin().read_to_string(&mut buffer).expect("Failed to read from stdin.");
-        let value: f64 = buffer.trim().parse().expect("Stdin must be a valid number.");
-        Temperature::new(value, Scale::Celsius)
+        match io::stdin().read_to_string(&mut buffer) {
+            Ok(0) => {
+                // No data available, show help
+                Args::command().print_help().unwrap();
+                std::process::exit(0);
+            }
+            Ok(_) => {
+                let trimmed = buffer.trim();
+                if trimmed.is_empty() {
+                    Args::command().print_help().unwrap();
+                    std::process::exit(0);
+                }
+                let value: f64 = trimmed.parse().expect("Stdin must be a valid number.");
+                Temperature::new(value, Scale::Celsius)
+            }
+            Err(_) => {
+                Args::command().print_help().unwrap();
+                std::process::exit(0);
+            }
+        }
     } else {
-        eprintln!("{}", "Error: No input provided. Please provide a value and scale as arguments, or pipe a value to the program.".red());
-        std::process::exit(1);
+        Args::command().print_help().unwrap();
+        std::process::exit(0);
     };
 
+    process_temperature(input_temp, args.to);
+}
+
+fn process_temperature(input_temp: Temperature, target_scale: Option<Scale>) {
     println!("{}", format!("Input: {}", input_temp).bold());
 
-    if let Some(target_scale) = args.to {
+    if let Some(target_scale) = target_scale {
         let converted_temp = match target_scale {
             Scale::Celsius => input_temp.to_celsius(),
             Scale::Fahrenheit => input_temp.to_fahrenheit(),
