@@ -4,20 +4,31 @@ use std::io::{self, Read};
 use temp_converter::{Scale, Temperature};
 use atty::Stream;
 
-const LOGO: &str = r#"
- _______                        ________
-|       \                      /        |
-| $$$$\ ______   __    __  | $$$$|
-| $$__/  \      \ |  \  /  | | $__
-| $$    \  $$$$\| $ /  | | $  
-| $$$   /      $| $<   | | $$$
-| $__/  |  $$$$| $ \  | | $__/
-| $    |  $    $| $  \ | | $
- \$$$$ \$$$$ \$   \| \$$$$
-"#;
+fn get_logo() -> String {
+    format!("{}", r#"
+ ████████╗███████╗███╗   ███╗██████╗ 
+ ╚══██╔══╝██╔════╝████╗ ████║██╔══██╗
+    ██║   █████╗  ██╔████╔██║██████╔╝
+    ██║   ██╔══╝  ██║╚██╔╝██║██╔═══╝ 
+    ██║   ███████╗██║ ╚═╝ ██║██║     
+    ╚═╝   ╚══════╝╚═╝     ╚═╝╚═╝     
+                                     
+ ██████╗ ██████╗ ███╗   ██╗██╗   ██╗███████╗██████╗ ████████╗███████╗██████╗ 
+██╔════╝██╔═══██╗████╗  ██║██║   ██║██╔════╝██╔══██╗╚══██╔══╝██╔════╝██╔══██╗
+██║     ██║   ██║██╔██╗ ██║██║   ██║█████╗  ██████╔╝   ██║   █████╗  ██████╔╝
+██║     ██║   ██║██║╚██╗██║╚██╗ ██╔╝██╔══╝  ██╔══██╗   ██║   ██╔══╝  ██╔══██╗
+╚██████╗╚██████╔╝██║ ╚████║ ╚████╔╝ ███████╗██║  ██║   ██║   ███████╗██║  ██║
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+"#.truecolor(255, 165, 0))
+}
+
+fn print_help() {
+    println!("{}", get_logo());
+    Args::command().print_help().unwrap();
+}
 
 #[derive(Parser, Debug)]
-#[command(author, version, about = "A CLI tool for converting between temperature scales (Celsius, Fahrenheit, Kelvin, Rankine). Run without arguments to see this help.", long_about = None, before_help = LOGO)]
+#[command(author, version, about = "A CLI tool for converting between temperature scales (Celsius, Fahrenheit, Kelvin, Rankine). Run without arguments to see this help.", long_about = None)]
 struct Args {
     /// The temperature value to convert
     #[arg(required = false)]
@@ -42,25 +53,25 @@ fn main() {
         match io::stdin().read_to_string(&mut buffer) {
             Ok(0) => {
                 // No data available, show help
-                Args::command().print_help().unwrap();
+                print_help();
                 std::process::exit(0);
             }
             Ok(_) => {
                 let trimmed = buffer.trim();
                 if trimmed.is_empty() {
-                    Args::command().print_help().unwrap();
+                    print_help();
                     std::process::exit(0);
                 }
                 let value: f64 = trimmed.parse().expect("Stdin must be a valid number.");
                 Temperature::new(value, Scale::Celsius)
             }
             Err(_) => {
-                Args::command().print_help().unwrap();
+                print_help();
                 std::process::exit(0);
             }
         }
     } else {
-        Args::command().print_help().unwrap();
+        print_help();
         std::process::exit(0);
     };
 
