@@ -57,8 +57,28 @@ fn test_rankine_to_celsius() {
 }
 
 #[test]
+fn test_celsius_to_reaumur() {
+    let temp = Temperature::new(WATER_FREEZING_C, Scale::Celsius);
+    assert_approx_eq(temp.to_reaumur().value, 0.0);
+
+    let temp = Temperature::new(WATER_BOILING_C, Scale::Celsius);
+    assert_approx_eq(temp.to_reaumur().value, 80.0);
+}
+
+#[test]
+fn test_reaumur_to_celsius() {
+    let temp = Temperature::new(0.0, Scale::Reaumur);
+    assert_approx_eq(temp.to_celsius().value, WATER_FREEZING_C);
+
+    let temp = Temperature::new(80.0, Scale::Reaumur);
+    assert_approx_eq(temp.to_celsius().value, WATER_BOILING_C);
+}
+
+#[test]
 fn test_scale_from_str() {
     assert_eq!("celsius".parse::<Scale>().unwrap(), Scale::Celsius);
     assert_eq!("f".parse::<Scale>().unwrap(), Scale::Fahrenheit);
+    assert_eq!("reaumur".parse::<Scale>().unwrap(), Scale::Reaumur);
+    assert_eq!("re".parse::<Scale>().unwrap(), Scale::Reaumur);
     assert!("invalid".parse::<Scale>().is_err());
 }

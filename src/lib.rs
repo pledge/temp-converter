@@ -7,6 +7,7 @@ pub enum Scale {
     Fahrenheit,
     Kelvin,
     Rankine,
+    Reaumur,
 }
 
 impl FromStr for Scale {
@@ -18,7 +19,8 @@ impl FromStr for Scale {
             "f" | "fahrenheit" => Ok(Scale::Fahrenheit),
             "k" | "kelvin" => Ok(Scale::Kelvin),
             "r" | "rankine" => Ok(Scale::Rankine),
-            _ => Err(format!("'{}' is not a valid scale. Use 'celsius', 'fahrenheit', 'kelvin', or 'rankine'.", s)),
+            "re" | "reaumur" => Ok(Scale::Reaumur),
+            _ => Err(format!("'{}' is not a valid scale. Use 'celsius', 'fahrenheit', 'kelvin', 'rankine', or 'reaumur'.", s)),
         }
     }
 }
@@ -30,6 +32,7 @@ impl fmt::Display for Scale {
             Scale::Fahrenheit => write!(f, "Fahrenheit"),
             Scale::Kelvin => write!(f, "Kelvin"),
             Scale::Rankine => write!(f, "Rankine"),
+            Scale::Reaumur => write!(f, "Reaumur"),
         }
     }
 }
@@ -51,38 +54,38 @@ impl Temperature {
             Scale::Fahrenheit => (self.value - 32.0) * 5.0 / 9.0,
             Scale::Kelvin => self.value - 273.15,
             Scale::Rankine => (self.value - 491.67) * 5.0 / 9.0,
+            Scale::Reaumur => self.value * 5.0 / 4.0,
         };
         Temperature::new(value, Scale::Celsius)
     }
 
     pub fn to_fahrenheit(&self) -> Temperature {
-        let value = match self.scale {
-            Scale::Celsius => self.value * 9.0 / 5.0 + 32.0,
-            Scale::Fahrenheit => self.value,
-            Scale::Kelvin => (self.value - 273.15) * 9.0 / 5.0 + 32.0,
-            Scale::Rankine => self.value - 459.67,
-        };
-        Temperature::new(value, Scale::Fahrenheit)
+        if self.scale == Scale::Fahrenheit {
+            return *self;
+        }
+        let celsius = self.to_celsius().value;
+        Temperature::new(celsius * 9.0 / 5.0 + 32.0, Scale::Fahrenheit)
     }
 
     pub fn to_kelvin(&self) -> Temperature {
-        let value = match self.scale {
-            Scale::Celsius => self.value + 273.15,
-            Scale::Fahrenheit => (self.value - 32.0) * 5.0 / 9.0 + 273.15,
-            Scale::Kelvin => self.value,
-            Scale::Rankine => self.value * 5.0 / 9.0,
-        };
-        Temperature::new(value, Scale::Kelvin)
+        if self.scale == Scale::Kelvin {
+            return *self;
+        }
+        let celsius = self.to_celsius().value;
+        Temperature::new(celsius + 273.15, Scale::Kelvin)
     }
 
     pub fn to_rankine(&self) -> Temperature {
-        let value = match self.scale {
-            Scale::Celsius => (self.value + 273.15) * 9.0 / 5.0,
-            Scale::Fahrenheit => self.value + 459.67,
-            Scale::Kelvin => self.value * 9.0 / 5.0,
-            Scale::Rankine => self.value,
-        };
-        Temperature::new(value, Scale::Rankine)
+        if self.scale == Scale::Rankine {
+            return *self;
+        }
+        let celsius = self.to_celsius().value;
+        Temperature::new((celsius + 273.15) * 9.0 / 5.0, Scale::Rankine)
+    }
+
+    pub fn to_reaumur(&self) -> Temperature {
+        let celsius = self.to_celsius().value;
+        Temperature::new(celsius * 4.0 / 5.0, Scale::Reaumur)
     }
 }
 
