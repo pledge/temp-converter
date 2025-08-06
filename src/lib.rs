@@ -8,6 +8,9 @@ pub enum Scale {
     Kelvin,
     Rankine,
     Reaumur,
+    Newton,
+    Delisle,
+    Romer,
 }
 
 impl FromStr for Scale {
@@ -20,7 +23,10 @@ impl FromStr for Scale {
             "k" | "kelvin" => Ok(Scale::Kelvin),
             "r" | "rankine" => Ok(Scale::Rankine),
             "re" | "reaumur" => Ok(Scale::Reaumur),
-            _ => Err(format!("'{}' is not a valid scale. Use 'celsius', 'fahrenheit', 'kelvin', 'rankine', or 'reaumur'.", s)),
+            "n" | "newton" => Ok(Scale::Newton),
+            "d" | "delisle" => Ok(Scale::Delisle),
+            "ro" | "romer" => Ok(Scale::Romer),
+            _ => Err(format!("'{}' is not a valid scale. Use 'celsius', 'fahrenheit', 'kelvin', 'rankine', 'reaumur', 'newton', 'delisle', or 'romer'.", s)),
         }
     }
 }
@@ -33,6 +39,9 @@ impl fmt::Display for Scale {
             Scale::Kelvin => write!(f, "Kelvin"),
             Scale::Rankine => write!(f, "Rankine"),
             Scale::Reaumur => write!(f, "Reaumur"),
+            Scale::Newton => write!(f, "Newton"),
+            Scale::Delisle => write!(f, "Delisle"),
+            Scale::Romer => write!(f, "Rømer"),
         }
     }
 }
@@ -55,6 +64,9 @@ impl Temperature {
             Scale::Kelvin => self.value - 273.15,
             Scale::Rankine => (self.value - 491.67) * 5.0 / 9.0,
             Scale::Reaumur => self.value * 5.0 / 4.0,
+            Scale::Newton => self.value * 100.0 / 33.0,
+            Scale::Delisle => 100.0 - self.value * 2.0 / 3.0,
+            Scale::Romer => (self.value - 7.5) * 40.0 / 21.0,
         };
         Temperature::new(value, Scale::Celsius)
     }
@@ -86,6 +98,21 @@ impl Temperature {
     pub fn to_reaumur(&self) -> Temperature {
         let celsius = self.to_celsius().value;
         Temperature::new(celsius * 4.0 / 5.0, Scale::Reaumur)
+    }
+
+    pub fn to_newton(&self) -> Temperature {
+        let celsius = self.to_celsius().value;
+        Temperature::new(celsius * 33.0 / 100.0, Scale::Newton)
+    }
+
+    pub fn to_delisle(&self) -> Temperature {
+        let celsius = self.to_celsius().value;
+        Temperature::new((100.0 - celsius) * 3.0 / 2.0, Scale::Delisle)
+    }
+
+    pub fn to_romer(&self) -> Temperature {
+        let celsius = self.to_celsius().value;
+        Temperature::new(celsius * 21.0 / 40.0 + 7.5, Scale::Romer)
     }
 }
 

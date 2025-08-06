@@ -156,3 +156,19 @@ The following scales are supported, with both full names and short forms:
 - `fahrenheit` / `f`
 - `kelvin` / `k`
 - `rankine` / `r`
+- `reaumur` / `re`
+- `newton` / `n`
+- `delisle` / `d`
+- `romer` / `ro`
+
+### Historical and Obscure Scales
+
+In addition to the common temperature scales, this tool also supports several historical and lesser-known scales. These are primarily of historical interest and are not used in modern scientific or industrial applications.
+
+- **Réaumur (°Ré):** Developed by René Antoine Ferchault de Réaumur in 1730, this scale was widely used in parts of Europe. It sets the freezing point of water at 0 °Ré and the boiling point at 80 °Ré. It is sometimes used in cheese production.
+
+- **Newton (°N):** Devised by Isaac Newton around 1700, this scale was a precursor to the Celsius scale. It sets the freezing point of water at 0 °N and the boiling point at 33 °N.
+
+- **Delisle (°D):** Invented by the French astronomer Joseph-Nicolas Delisle in 1732, this scale is notable for being inverted, with the boiling point of water at 0 °D and the freezing point at 150 °D. It was used in Russia for over a century.
+
+- **Rømer (°Rø):** Created by the Danish astronomer Ole Rømer in 1701, this was one of the first calibrated temperature scales. It sets the freezing point of brine at 0 °Rø and the boiling point of water at 60 °Rø.

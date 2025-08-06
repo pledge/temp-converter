@@ -28,7 +28,7 @@ fn print_help() {
 }
 
 #[derive(Parser, Debug)]
-#[command(author, version, about = "A CLI tool for converting between temperature scales (Celsius, Fahrenheit, Kelvin, Rankine, Reaumur). Run without arguments to see this help.", long_about = None)]
+#[command(author, version, about = "A CLI tool for converting between temperature scales (Celsius, Fahrenheit, Kelvin, Rankine, Reaumur, Newton, Delisle, Rømer). Run without arguments to see this help.", long_about = None)]
 struct Args {
     /// The temperature value to convert
     #[arg(required = false)]
@@ -88,11 +88,23 @@ fn process_temperature(input_temp: Temperature, target_scale: Option<Scale>) {
             Scale::Kelvin => input_temp.to_kelvin(),
             Scale::Rankine => input_temp.to_rankine(),
             Scale::Reaumur => input_temp.to_reaumur(),
+            Scale::Newton => input_temp.to_newton(),
+            Scale::Delisle => input_temp.to_delisle(),
+            Scale::Romer => input_temp.to_romer(),
         };
         println!("{}", format!("Converted: {}", converted_temp).green());
     } else {
         println!("{}", "Converted:".green());
-        let all_scales = vec![Scale::Celsius, Scale::Fahrenheit, Scale::Kelvin, Scale::Rankine, Scale::Reaumur];
+        let all_scales = vec![
+            Scale::Celsius,
+            Scale::Fahrenheit,
+            Scale::Kelvin,
+            Scale::Rankine,
+            Scale::Reaumur,
+            Scale::Newton,
+            Scale::Delisle,
+            Scale::Romer,
+        ];
         for scale in all_scales {
             if scale != input_temp.scale {
                 let converted_temp = match scale {
@@ -101,6 +113,9 @@ fn process_temperature(input_temp: Temperature, target_scale: Option<Scale>) {
                     Scale::Kelvin => input_temp.to_kelvin(),
                     Scale::Rankine => input_temp.to_rankine(),
                     Scale::Reaumur => input_temp.to_reaumur(),
+                    Scale::Newton => input_temp.to_newton(),
+                    Scale::Delisle => input_temp.to_delisle(),
+                    Scale::Romer => input_temp.to_romer(),
                 };
                 println!("  - {}", format!("{}: {}", scale, converted_temp).cyan());
             }
